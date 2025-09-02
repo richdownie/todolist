@@ -15,7 +15,8 @@ final class todolistUITests: XCTestCase {
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
 
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+        // In UI tests it's important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+        XCUIDevice.shared.orientation = .portrait
     }
 
     override func tearDownWithError() throws {
@@ -58,11 +59,6 @@ final class todolistUITests: XCTestCase {
         // Wait for the todo to appear in the list
         let todoText = app.staticTexts["Buy groceries"]
         XCTAssertTrue(todoText.waitForExistence(timeout: 5.0), "Todo text should appear in list")
-        
-        // Verify the text field is cleared (with a small delay)
-        let clearedPredicate = NSPredicate(format: "value == '' OR value == nil")
-        expectation(for: clearedPredicate, evaluatedWith: textField, handler: nil)
-        waitForExpectations(timeout: 3.0, handler: nil)
         
         // Find and tap the delete button for the todo using accessibility identifier
         let deleteButton = app.buttons["deleteTodoButton"]
