@@ -28,42 +28,51 @@ final class todolistUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
         
-        // Verify the navigation title exists
-        XCTAssertTrue(app.navigationBars["Todo List"].exists)
+        // Wait for the app to load and verify the navigation title exists
+        let navigationBar = app.navigationBars["Todo List"]
+        XCTAssertTrue(navigationBar.waitForExistence(timeout: 5.0), "Navigation bar should exist")
         
-        // Find the text field and add button
-        let textField = app.textFields["Add new todo..."]
-        let addButton = app.buttons.containing(.image, identifier: "plus.circle.fill").element
+        // Find the text field and add button with waits using accessibility identifiers
+        let textField = app.textFields["todoTextField"]
+        XCTAssertTrue(textField.waitForExistence(timeout: 5.0), "Text field should exist")
+        
+        // Look for button by accessibility identifier
+        let addButton = app.buttons["addTodoButton"]
+        XCTAssertTrue(addButton.waitForExistence(timeout: 5.0), "Add button should exist")
         
         // Verify initial state - add button should be disabled
-        XCTAssertTrue(textField.exists)
-        XCTAssertTrue(addButton.exists)
-        XCTAssertFalse(addButton.isEnabled)
+        XCTAssertFalse(addButton.isEnabled, "Add button should be initially disabled")
         
         // Type a todo item
         textField.tap()
         textField.typeText("Buy groceries")
         
-        // Add button should now be enabled
-        XCTAssertTrue(addButton.isEnabled)
+        // Wait for the button to become enabled
+        let enabledPredicate = NSPredicate(format: "isEnabled == true")
+        expectation(for: enabledPredicate, evaluatedWith: addButton, handler: nil)
+        waitForExpectations(timeout: 3.0, handler: nil)
         
         // Tap the add button
         addButton.tap()
         
-        // Verify the todo appears in the list
+        // Wait for the todo to appear in the list
         let todoText = app.staticTexts["Buy groceries"]
-        XCTAssertTrue(todoText.exists)
+        XCTAssertTrue(todoText.waitForExistence(timeout: 5.0), "Todo text should appear in list")
         
-        // Verify the text field is cleared
-        XCTAssertEqual(textField.value as? String, "")
+        // Verify the text field is cleared (with a small delay)
+        let clearedPredicate = NSPredicate(format: "value == '' OR value == nil")
+        expectation(for: clearedPredicate, evaluatedWith: textField, handler: nil)
+        waitForExpectations(timeout: 3.0, handler: nil)
         
-        // Find and tap the delete button for the todo
-        let deleteButton = app.buttons.containing(.image, identifier: "trash").element
-        XCTAssertTrue(deleteButton.exists)
+        // Find and tap the delete button for the todo using accessibility identifier
+        let deleteButton = app.buttons["deleteTodoButton"]
+        XCTAssertTrue(deleteButton.waitForExistence(timeout: 5.0), "Delete button should exist")
         deleteButton.tap()
         
         // Verify the todo is removed from the list
-        XCTAssertFalse(todoText.exists)
+        let disappearPredicate = NSPredicate(format: "exists == false")
+        expectation(for: disappearPredicate, evaluatedWith: todoText, handler: nil)
+        waitForExpectations(timeout: 5.0, handler: nil)
     }
 
     @MainActor

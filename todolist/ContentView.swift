@@ -24,12 +24,14 @@ struct ContentView: View {
                 HStack {
                     TextField("Add new todo...", text: $newTodoText)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .accessibilityIdentifier("todoTextField")
                     
                     Button(action: addTodo) {
                         Image(systemName: "plus.circle.fill")
                             .foregroundColor(.blue)
                     }
                     .disabled(newTodoText.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .accessibilityIdentifier("addTodoButton")
                 }
                 .padding()
                 
@@ -48,6 +50,7 @@ struct ContentView: View {
                             Image(systemName: "trash")
                                 .foregroundColor(.red)
                         }
+                        .accessibilityIdentifier("deleteTodoButton")
                     }
                 }
             }
