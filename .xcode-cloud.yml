@@ -20,11 +20,11 @@ workflows:
       - name: Build
         action: build
         scheme: todolist
-        destination: platform=iOS Simulator,name=Any iOS Simulator Device
+        destination: platform=iOS Simulator,OS=latest
       - name: Test
         action: test
         scheme: todolist
-        destination: platform=iOS Simulator,name=Any iOS Simulator Device
+        destination: platform=iOS Simulator,OS=latest
     
   archive:
     name: "Archive and Distribute"
