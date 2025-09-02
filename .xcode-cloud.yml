@@ -1,0 +1,46 @@
+version: 1
+
+ci:
+  xcode-version: latest
+  
+workflows:
+  build-and-test:
+    name: "Build and Test"
+    description: "Build the app and run all tests"
+    environment:
+      xcode: latest
+      macos: latest
+    trigger:
+      branches:
+        - main
+        - develop
+      pull-requests:
+        - main
+    actions:
+      - name: Build
+        action: build
+        scheme: todolist
+        destination: platform=iOS Simulator,name=iPhone 15
+      - name: Test
+        action: test
+        scheme: todolist
+        destination: platform=iOS Simulator,name=iPhone 15
+        test-plan: todolist
+    
+  archive:
+    name: "Archive and Distribute"
+    description: "Build archive for distribution"
+    environment:
+      xcode: latest
+      macos: latest
+    trigger:
+      tags:
+        - v*
+    actions:
+      - name: Archive
+        action: archive
+        scheme: todolist
+        destination: generic/platform=iOS
+      - name: Export
+        action: export-archive
+        export-method: app-store
